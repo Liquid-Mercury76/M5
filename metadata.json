@@ -1,0 +1,5 @@
+{
+  "name": "UNZA Geodatabase",
+  "description": "A modern web interface for uploading and managing geospatial data, including maps and their associated file formats. Users can upload map images and corresponding data files like .shp, Excel, and .boundaries, which can be viewed and downloaded by colleagues.",
+  "requestFramePermissions": []
+}
