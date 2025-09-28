@@ -12,15 +12,15 @@ interface MapEntryCardProps {
 
 const FileTypeIcon: React.FC<{ fileType: string }> = ({ fileType }) => {
   if (fileType.includes('spreadsheet') || fileType.includes('excel')) {
-    return <ExcelIcon className="h-6 w-6 text-green-500 flex-shrink-0" />;
+    return <ExcelIcon className="h-6 w-6 text-green-400 flex-shrink-0" />;
   }
   if (fileType.includes('octet-stream') || fileType.endsWith('.shp') || fileType.endsWith('.gdb')) {
-    return <ShapefileIcon className="h-6 w-6 text-purple-500 flex-shrink-0" />;
+    return <ShapefileIcon className="h-6 w-6 text-purple-400 flex-shrink-0" />;
   }
   if (fileType.startsWith('text/')) {
-    return <TextFileIcon className="h-6 w-6 text-gray-500 flex-shrink-0" />;
+    return <TextFileIcon className="h-6 w-6 text-gray-400 flex-shrink-0" />;
   }
-  return <GenericFileIcon className="h-6 w-6 text-blue-500 flex-shrink-0" />;
+  return <GenericFileIcon className="h-6 w-6 text-blue-400 flex-shrink-0" />;
 };
 
 const formatBytes = (bytes: number, decimals = 2): string => {
@@ -33,18 +33,18 @@ const formatBytes = (bytes: number, decimals = 2): string => {
 };
 
 const FileListItem: React.FC<{ file: MapFile }> = ({ file }) => (
-    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-        <div className="flex items-center space-x-3 min-w-0">
+    <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/80 transition-colors">
+        <div className="flex items-center space-x-4 min-w-0">
             <FileTypeIcon fileType={file.type} />
             <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{file.name}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{formatBytes(file.size)}</p>
+                <p className="text-sm font-medium text-gray-200 truncate">{file.name}</p>
+                <p className="text-xs text-gray-400">{formatBytes(file.size)}</p>
             </div>
         </div>
         <a 
             href={file.url} 
             download={file.name}
-            className="ml-4 flex-shrink-0 inline-flex items-center p-2 border border-transparent text-sm leading-4 font-medium rounded-full text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900"
+            className="ml-4 flex-shrink-0 inline-flex items-center justify-center h-9 w-9 border border-transparent text-sm font-medium rounded-full text-violet-300 bg-violet-900/30 hover:bg-violet-900/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 focus:ring-offset-gray-900 transition-all"
             aria-label={`Download ${file.name}`}
             onClick={(e) => { if(file.url === '#') e.preventDefault(); /* Prevent dummy link navigation */ }}
         >
@@ -128,7 +128,7 @@ export const MapEntryCard: React.FC<MapEntryCardProps> = ({ entry, onDelete, onU
   };
 
   return (
-    <article className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-shadow hover:shadow-xl">
+    <article className="bg-gray-900/50 rounded-2xl shadow-2xl shadow-black/30 overflow-hidden border border-gray-500/30 backdrop-blur-sm transition-all hover:border-gray-500/50">
       <div className="grid grid-cols-1 md:grid-cols-12">
         <div className="md:col-span-4 lg:col-span-4 relative group">
           {previewImage ? (
@@ -138,10 +138,11 @@ export const MapEntryCard: React.FC<MapEntryCardProps> = ({ entry, onDelete, onU
                 alt={title} 
                 className="h-64 w-full object-cover md:h-full"
               />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all"></div>
               <a
                 href={previewImage.url}
                 download={previewImage.name}
-                className="absolute top-3 right-3 p-2 bg-black bg-opacity-50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                className="absolute top-3 right-3 h-9 w-9 flex items-center justify-center bg-black bg-opacity-50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                 aria-label="Download preview image"
                 onClick={(e) => { if(previewImage.url === '#') e.preventDefault(); }}
               >
@@ -149,39 +150,39 @@ export const MapEntryCard: React.FC<MapEntryCardProps> = ({ entry, onDelete, onU
               </a>
             </>
           ) : (
-            <div className="h-64 md:h-full w-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+            <div className="h-64 md:h-full w-full bg-gray-800 flex items-center justify-center">
               <p className="text-gray-500">No Image</p>
             </div>
           )}
         </div>
         <div className="md:col-span-8 lg:col-span-8 p-6">
           <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{title}</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <div className="flex-1 pr-4">
+              <h3 className="text-xl font-bold text-gray-100">{title}</h3>
+              <p className="text-xs text-gray-400 mt-1">
                 Uploaded on: {new Date(uploadDate).toLocaleDateString()}
               </p>
             </div>
-            <div className="flex items-center space-x-2">
-               <button onClick={() => alert('Edit functionality not yet implemented.')} className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <div className="flex items-center space-x-1 flex-shrink-0">
+               <button onClick={() => alert('Edit functionality not yet implemented.')} className="p-2 text-gray-400 hover:text-violet-400 rounded-full hover:bg-gray-800/50 transition-colors">
                  <PencilIcon className="h-5 w-5"/>
                </button>
-               <button onClick={handleDelete} className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+               <button onClick={handleDelete} className="p-2 text-gray-400 hover:text-red-400 rounded-full hover:bg-gray-800/50 transition-colors">
                  <TrashIcon className="h-5 w-5"/>
                </button>
             </div>
           </div>
-          <p className="mt-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+          <p className="mt-4 text-sm text-gray-300 leading-relaxed">
             {description}
           </p>
           <div className="mt-6">
             <div className="flex justify-between items-center mb-3">
-              <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200">Associated Files</h4>
+              <h4 className="text-md font-semibold text-gray-200">Associated Files</h4>
               {(associatedFiles.length > 0 || previewImage) && (
                 <button
                   onClick={handleDownloadAll}
                   disabled={isDownloading}
-                  className="flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center px-4 py-2 border border-transparent text-xs font-medium rounded-full shadow-lg shadow-violet-900/40 text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   aria-label="Download all files for this entry"
                 >
                   <DownloadIcon className="h-4 w-4 mr-1.5" />
@@ -190,11 +191,11 @@ export const MapEntryCard: React.FC<MapEntryCardProps> = ({ entry, onDelete, onU
               )}
             </div>
             {associatedFiles.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2">
                     {associatedFiles.map(file => <FileListItem key={file.id} file={file} />)}
                 </div>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">No associated files for this entry.</p>
+              <p className="text-sm text-gray-400 italic mt-2">No associated files for this entry.</p>
             )}
           </div>
         </div>
