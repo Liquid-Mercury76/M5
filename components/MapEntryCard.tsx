@@ -7,7 +7,7 @@ declare const JSZip: any;
 interface MapEntryCardProps {
   entry: MapEntry;
   onDelete: (id: string) => void;
-  onUpdate: (entry: MapEntry) => void; // Placeholder for future edit functionality
+  onUpdate: (entry: MapEntry) => void; 
 }
 
 const FileTypeIcon: React.FC<{ fileType: string }> = ({ fileType }) => {
@@ -46,7 +46,6 @@ const FileListItem: React.FC<{ file: MapFile }> = ({ file }) => (
             download={file.name}
             className="ml-4 flex-shrink-0 inline-flex items-center justify-center h-9 w-9 border border-transparent text-sm font-medium rounded-full text-violet-300 bg-violet-900/30 hover:bg-violet-900/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 focus:ring-offset-gray-900 transition-all"
             aria-label={`Download ${file.name}`}
-            onClick={(e) => { if(file.url === '#') e.preventDefault(); /* Prevent dummy link navigation */ }}
         >
             <DownloadIcon className="h-5 w-5" />
         </a>
@@ -69,6 +68,7 @@ export const MapEntryCard: React.FC<MapEntryCardProps> = ({ entry, onDelete, onU
     try {
       if (typeof JSZip === 'undefined') {
         alert('A library required for zipping files (JSZip) is not available.');
+        setIsDownloading(false);
         return;
       }
       const zip = new JSZip();
@@ -81,31 +81,13 @@ export const MapEntryCard: React.FC<MapEntryCardProps> = ({ entry, onDelete, onU
       
       if (filesToZip.length === 0) {
         alert("No files to download.");
+        setIsDownloading(false);
         return;
       }
 
-      const fetchPromises = filesToZip.map(file => {
-        if (file.url === '#') {
-          const placeholderContent = `This is a placeholder for the file: ${file.name}\nSize: ${formatBytes(file.size)}`;
-          return Promise.resolve({ name: file.name, blob: new Blob([placeholderContent], { type: 'text/plain' }) });
-        }
-        return fetch(file.url)
-          .then(response => {
-            if (!response.ok) throw new Error(`Failed to fetch ${file.name}. Status: ${response.statusText}`);
-            return response.blob();
-          })
-          .then(blob => ({ name: file.name, blob }))
-          .catch(err => {
-            console.error(`Could not download ${file.name}:`, err);
-            const errorContent = `Failed to download file: ${file.name}\nError: ${err.message}`;
-            return { name: `DOWNLOAD_ERROR_${file.name}.txt`, blob: new Blob([errorContent], { type: 'text/plain' }) };
-          });
-      });
-
-      const fileResults = await Promise.all(fetchPromises);
-      
-      fileResults.forEach(result => {
-        zip.file(result.name, result.blob);
+      // The file data is already available locally in the .file property
+      filesToZip.forEach(mapFile => {
+        zip.file(mapFile.name, mapFile.file);
       });
 
       const zipBlob = await zip.generateAsync({ type: "blob" });
@@ -144,7 +126,6 @@ export const MapEntryCard: React.FC<MapEntryCardProps> = ({ entry, onDelete, onU
                 download={previewImage.name}
                 className="absolute top-3 right-3 h-9 w-9 flex items-center justify-center bg-black bg-opacity-50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                 aria-label="Download preview image"
-                onClick={(e) => { if(previewImage.url === '#') e.preventDefault(); }}
               >
                 <DownloadIcon className="h-5 w-5" />
               </a>
